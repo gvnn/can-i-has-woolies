@@ -10,9 +10,9 @@ tmp/
 
 .DS_Store
 .npmrc
-*.tsbuildinfo
 npm-debug.log
-package-lock.json
 yarn-error.log
 
-/template/**/yarn.lock
+# Gantry resource files support non-standard template syntax
+gantry.yaml
+gantry.yml

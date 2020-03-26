@@ -1,0 +1,30 @@
+{
+  "name": "can-i-has-woolies",
+  "version": "1.0.0",
+  "repository": "git@github.com:gvnn/can-i-has-woolies.git",
+  "author": "Giovanni Ferron <gvnnrulez@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^12.12.31",
+    "nodemon": "^2.0.2",
+    "prettier": "^2.0.2",
+    "typescript": "^3.8.3"
+  },
+  "scripts": {
+    "build": "tsc",
+    "postinstall": "npm run build",
+    "start": "npm run serve",
+    "serve": "node lib/index.js",
+    "watch-node": "nodemon lib/index.js",
+    "watch-ts": "tsc -w",
+    "format": "prettier --write ."
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "dependencies": {
+    "chalk": "^3.0.0",
+    "date-fns": "^2.11.0",
+    "gaxios": "^3.0.2"
+  }
+}
