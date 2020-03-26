@@ -11,7 +11,7 @@ const pattern = "PPPP";
 const printFullList = (slot: Timeslot): void => {
   const date = parseJSON(slot.Date);
   log(chalk.bold(format(date, pattern)), "\n");
-  slot.Times.forEach((time) => {
+  slot.Times.forEach(time => {
     if (time.Available) {
       log(time.TimeWindow, "\t", chalk.green(time.TimeSlotStatus));
     } else {
@@ -24,7 +24,7 @@ const printFullList = (slot: Timeslot): void => {
 
 const printAvailable = (data: Timeslot[]): void => {
   const available = data.reduce((accum, current) => {
-    const avTimes = current.Times.filter((t) => t.Available);
+    const avTimes = current.Times.filter(t => t.Available);
     if (avTimes.length > 0) {
       accum.push({ Date: current.Date, Times: avTimes });
     }
@@ -32,7 +32,7 @@ const printAvailable = (data: Timeslot[]): void => {
   }, [] as Timeslot[]);
 
   if (available.length === 0) {
-    log(chalk.red("No available times for now, check later!"));
+    log(chalk.red.bold("No available times for now, check later!"), "\n");
     return;
   }
 
@@ -61,8 +61,8 @@ const loadTimeSlot = async (
       areaId: addressConfig.AreaId,
       fulfilmentMethod: "Courier",
       getMergedResults: false,
-      suburbId: addressConfig.SuburbId,
-    },
+      suburbId: addressConfig.SuburbId
+    }
   });
 
 export const checkTimeSlots = async (
