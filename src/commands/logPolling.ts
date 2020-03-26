@@ -15,7 +15,7 @@ const notify = (): Promise<boolean> =>
         title: config.get("name"),
         message: "New availability, quick!",
         closeLabel: "Don't worry",
-        actions: linkAnswer
+        actions: linkAnswer,
       },
       (err, _response, metadata) => {
         if (err) {
@@ -64,6 +64,6 @@ export const logPolling = async (): Promise<void> => {
         "\n"
       );
     }
-    await new Promise(resolve => setTimeout(resolve, 1000 * 60 * 15));
+    await new Promise((resolve) => setTimeout(resolve, 1000 * 60 * 15));
   }
 };

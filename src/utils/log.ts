@@ -11,7 +11,7 @@ const pattern = "PPPP";
 const printFullList = (slot: Timeslot): void => {
   const date = parseJSON(slot.Date);
   log(chalk.bold(format(date, pattern)), "\n");
-  slot.Times.forEach(time => {
+  slot.Times.forEach((time) => {
     if (time.Available) {
       log(time.TimeWindow, "\t", chalk.green(time.TimeSlotStatus));
     } else {
