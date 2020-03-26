@@ -1,17 +1,15 @@
 import { parseJSON, format } from "date-fns";
 import chalk from "chalk";
 import { log } from "../utils/log";
-import { Timeslot, Address } from "../types";
 import config from "config";
-import http from "../utils/http";
-import { GaxiosResponse } from "gaxios";
+import { timeSlots, Timeslot, Address } from "../services/woolies";
 
 const pattern = "PPPP";
 
 const printFullList = (slot: Timeslot): void => {
   const date = parseJSON(slot.Date);
   log(chalk.bold(format(date, pattern)), "\n");
-  slot.Times.forEach(time => {
+  slot.Times.forEach((time) => {
     if (time.Available) {
       log(time.TimeWindow, "\t", chalk.green(time.TimeSlotStatus));
     } else {
@@ -24,7 +22,7 @@ const printFullList = (slot: Timeslot): void => {
 
 const printAvailable = (data: Timeslot[]): void => {
   const available = data.reduce((accum, current) => {
-    const avTimes = current.Times.filter(t => t.Available);
+    const avTimes = current.Times.filter((t) => t.Available);
     if (avTimes.length > 0) {
       accum.push({ Date: current.Date, Times: avTimes });
     }
@@ -51,20 +49,6 @@ const printResult = (data: Timeslot[], output: "list" | "check"): void => {
   printAvailable(data);
 };
 
-const loadTimeSlot = async (
-  addressConfig: Address
-): Promise<GaxiosResponse<Timeslot[]>> =>
-  http.request<Timeslot[]>({
-    url: config.get("api.timeslots"),
-    params: {
-      addressId: addressConfig.AddressId,
-      areaId: addressConfig.AreaId,
-      fulfilmentMethod: "Courier",
-      getMergedResults: false,
-      suburbId: addressConfig.SuburbId
-    }
-  });
-
 export const checkTimeSlots = async (
   output: "list" | "check"
 ): Promise<void> => {
@@ -78,7 +62,7 @@ export const checkTimeSlots = async (
 
   log("Searching for:", addressConfig.AddressText, "\n");
 
-  const slots = await loadTimeSlot(addressConfig);
+  const slots = await timeSlots(addressConfig);
 
   printResult(slots.data, output);
 };

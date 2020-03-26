@@ -1,27 +1,15 @@
 import chalk from "chalk";
 import { log } from "../utils/log";
-import { Address, AddressSearch } from "../types";
-import config from "config";
-import http from "../utils/http";
+import {
+  AddressSearch,
+  findAddress,
+  identifyAddress,
+} from "../services/woolies";
+
 import inquirer from "inquirer";
 import fs from "fs";
-import { GaxiosResponse } from "gaxios";
-import path from "path";
 
-const findAddress = async (
-  Search: string
-): Promise<
-  GaxiosResponse<{
-    Response: AddressSearch[];
-  }>
-> =>
-  http.request<{ Response: AddressSearch[] }>({
-    url: config.get("api.address"),
-    method: "POST",
-    data: {
-      Search,
-    },
-  });
+import path from "path";
 
 const promptOptions = async (addresses: {
   Response: AddressSearch[];
@@ -38,31 +26,17 @@ const promptOptions = async (addresses: {
     })),
   });
 
-const findAddressData = async (selectedOption: {
-  AddressId: string;
-}): Promise<
-  GaxiosResponse<{
-    Address: Address;
-  }>
-> =>
-  http.request<{ Address: Address }>({
-    url: config.get("api.auto"),
-    method: "POST",
-    data: {
-      AddressId: selectedOption.AddressId,
-    },
-  });
-
 export const checkAddress = async (addr: string): Promise<void> => {
-  log("Searching for:", addr);
+  log("Searching for:", addr, "\n");
+
   const addresses = await findAddress(addr);
 
   const selectedOption = await promptOptions(addresses.data);
 
-  const selectedAddress = await findAddressData(selectedOption);
+  const selectedAddress = await identifyAddress(selectedOption);
 
   fs.writeFileSync(
-    path.join(__dirname, '../../config/local.json'),
+    path.join(__dirname, "../../config/local.json"),
     JSON.stringify({ address: selectedAddress.data.Address })
   );
 
