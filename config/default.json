@@ -3,6 +3,7 @@
   "api": {
     "baseURL": "https://www.woolworths.com.au",
     "timeslots": "/apis/ui/Timeslots",
-    "address": "/apis/ui/address/search"
+    "address": "/apis/ui/address/search",
+    "auto": "/apis/ui/address/auto"
   }
 }

@@ -16,3 +16,5 @@ package-lock.json
 yarn-error.log
 
 /template/**/yarn.lock
+
+config/local.json

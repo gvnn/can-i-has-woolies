@@ -3,22 +3,12 @@ import chalk from "chalk";
 import http from "./http";
 import config from "config";
 import { displayTitle } from "./silly";
+import { program } from "commander";
+import { Timeslot, Address, AddressSearch } from "./types";
+import inquirer from "inquirer";
+import fs from "fs";
 
 const log = console.log;
-
-interface TimeslotTime {
-  Status: string;
-  NormalAllocationStatus: string;
-  TimeWindow: string;
-  Available: boolean;
-  TimeSlotStatus: string;
-}
-
-interface Timeslot {
-  Times: TimeslotTime[];
-  Date: string;
-  ClosedText: string;
-}
 
 const printResult = (data: Timeslot[]) => {
   data.forEach(slot => {
@@ -39,20 +29,74 @@ const printResult = (data: Timeslot[]) => {
   });
 };
 
-const main = async () => {
-  await displayTitle();
+const checkTimeSlots = async () => {
+  let addressConfig: Address;
+  try {
+    addressConfig = config.get("address");
+  } catch (error) {
+    log(chalk.red('No addrress config. Run yarn start -a "your address"'));
+    return;
+  }
+
+  log("Searching for:", addressConfig.AddressText);
+
   const res = await http.request<Timeslot[]>({
     url: config.get("api.timeslots"),
     params: {
-      addressId: 8167070,
-      areaId: 2046,
+      addressId: addressConfig.AddressId,
+      areaId: addressConfig.AreaId,
       fulfilmentMethod: "Courier",
       getMergedResults: false,
-      suburbId: 3480
+      suburbId: addressConfig.SuburbId
     }
   });
 
   printResult(res.data);
+};
+
+const checkAddress = async (addr: string) => {
+  log("Searching for:", addr);
+  const res = await http.request<{ Response: AddressSearch[] }>({
+    url: config.get("api.address"),
+    method: "POST",
+    data: {
+      Search: addr
+    }
+  });
+  const inq = await inquirer.prompt({
+    type: "list",
+    name: "AddressId",
+    message: "What is your address?",
+    choices: res.data.Response.map(addr => ({
+      name: addr.Text,
+      value: addr.Id
+    }))
+  });
+
+  const auto = await http.request<{ Address: Address }>({
+    url: config.get("api.auto"),
+    method: "POST",
+    data: {
+      AddressId: inq.AddressId
+    }
+  });
+
+  fs.writeFileSync(
+    "./config/local.json",
+    JSON.stringify({ address: auto.data.Address })
+  );
+
+  log(chalk.red("Now you can search. Run yarn start -c"));
+};
+
+const main = async () => {
+  await displayTitle();
+
+  program
+    .option("-c, --check", "check time slots", checkTimeSlots)
+    .option("-a, --addr <type>", "search your address", checkAddress)
+    .allowUnknownOption(false)
+    .parse(process.argv);
 };
 
 main();
