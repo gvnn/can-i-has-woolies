@@ -14,7 +14,7 @@ const findAddress = async (
     Response: AddressSearch[];
   }>
 > =>
-  await http.request<{ Response: AddressSearch[] }>({
+  http.request<{ Response: AddressSearch[] }>({
     url: config.get("api.address"),
     method: "POST",
     data: {
