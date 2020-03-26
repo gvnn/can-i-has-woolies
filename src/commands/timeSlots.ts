@@ -16,9 +16,7 @@ const printResult = (data: Timeslot[]): void => {
     slot.Times.forEach(time => {
       log(
         time.TimeWindow,
-        time.Available
-          ? chalk.green(time.TimeSlotStatus)
-          : chalk.red(time.TimeSlotStatus)
+        chalk[time.Available ? "green" : "green"](time.TimeSlotStatus)
       );
     });
   });
