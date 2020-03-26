@@ -14,7 +14,9 @@ just run `yarn`
 
 yarn start [options]
 
+```
 Options:
   -c, --check        check time slots
   -a, --addr <type>  search your address
   -h, --help         display help for command
+```
