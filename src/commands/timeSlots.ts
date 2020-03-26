@@ -4,9 +4,10 @@ import { log } from "../utils/log";
 import { Timeslot, Address } from "../types";
 import config from "config";
 import http from "../utils/http";
+import { GaxiosResponse } from "gaxios";
 
 const printResult = (data: Timeslot[]): void => {
-  data.forEach((slot) => {
+  data.forEach(slot => {
     const date = parseJSON(slot.Date);
     const pattern = "dd.MM.yyyy";
     const output = format(date, pattern);
@@ -14,7 +15,7 @@ const printResult = (data: Timeslot[]): void => {
     log(chalk.blue(output));
     log(chalk.yellow(slot.ClosedText));
 
-    slot.Times.forEach((time) => {
+    slot.Times.forEach(time => {
       log(
         time.TimeWindow,
         time.Available
@@ -24,6 +25,20 @@ const printResult = (data: Timeslot[]): void => {
     });
   });
 };
+
+const loadTimeSlot = async (
+  addressConfig: Address
+): Promise<GaxiosResponse<Timeslot[]>> =>
+  http.request<Timeslot[]>({
+    url: config.get("api.timeslots"),
+    params: {
+      addressId: addressConfig.AddressId,
+      areaId: addressConfig.AreaId,
+      fulfilmentMethod: "Courier",
+      getMergedResults: false,
+      suburbId: addressConfig.SuburbId
+    }
+  });
 
 export const checkTimeSlots = async (): Promise<void> => {
   let addressConfig: Address;
@@ -36,16 +51,7 @@ export const checkTimeSlots = async (): Promise<void> => {
 
   log("Searching for:", addressConfig.AddressText);
 
-  const res = await http.request<Timeslot[]>({
-    url: config.get("api.timeslots"),
-    params: {
-      addressId: addressConfig.AddressId,
-      areaId: addressConfig.AreaId,
-      fulfilmentMethod: "Courier",
-      getMergedResults: false,
-      suburbId: addressConfig.SuburbId,
-    },
-  });
+  const slots = await loadTimeSlot(addressConfig);
 
-  printResult(res.data);
+  printResult(slots.data);
 };
