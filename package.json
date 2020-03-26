@@ -15,7 +15,7 @@
   },
   "scripts": {
     "build": "tsc",
-    "postinstall": "build",
+    "postinstall": "npm run build",
     "start": "node lib/index.js",
     "watch-node": "nodemon lib/index.js",
     "watch-ts": "tsc -w",
