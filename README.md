@@ -16,7 +16,9 @@ yarn start [options]
 
 ```
 Options:
+  Options:
   -c, --check        check time slots
+  -l, --list         full timeslots output
   -a, --addr <type>  search your address
   -h, --help         display help for command
 ```
