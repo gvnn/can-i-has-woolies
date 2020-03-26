@@ -4,7 +4,7 @@ import { program } from "commander";
 import { checkTimeSlots } from "./commands/timeSlots";
 import { checkAddress } from "./commands/address";
 
-const main = async () => {
+const main = async (): Promise<void> => {
   await displayTitle();
 
   program

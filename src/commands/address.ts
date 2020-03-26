@@ -5,37 +5,54 @@ import config from "config";
 import http from "../utils/http";
 import inquirer from "inquirer";
 import fs from "fs";
+import { GaxiosResponse } from "gaxios";
 
-const findAddress = async (Search: string) =>
+const findAddress = async (
+  Search: string
+): Promise<
+  GaxiosResponse<{
+    Response: AddressSearch[];
+  }>
+> =>
   await http.request<{ Response: AddressSearch[] }>({
     url: config.get("api.address"),
     method: "POST",
     data: {
-      Search
-    }
+      Search,
+    },
   });
 
-const promptOptions = async (addresses: { Response: AddressSearch[] }) =>
+const promptOptions = async (addresses: {
+  Response: AddressSearch[];
+}): Promise<{
+  AddressId: string;
+}> =>
   inquirer.prompt({
     type: "list",
     name: "AddressId",
     message: "What is your address?",
-    choices: addresses.Response.map(addr => ({
+    choices: addresses.Response.map((addr) => ({
       name: addr.Text,
-      value: addr.Id
-    }))
+      value: addr.Id,
+    })),
   });
 
-const findAddressData = async (selectedOption: { AddressId: any }) =>
+const findAddressData = async (selectedOption: {
+  AddressId: string;
+}): Promise<
+  GaxiosResponse<{
+    Address: Address;
+  }>
+> =>
   http.request<{ Address: Address }>({
     url: config.get("api.auto"),
     method: "POST",
     data: {
-      AddressId: selectedOption.AddressId
-    }
+      AddressId: selectedOption.AddressId,
+    },
   });
 
-export const checkAddress = async (addr: string) => {
+export const checkAddress = async (addr: string): Promise<void> => {
   log("Searching for:", addr);
   const addresses = await findAddress(addr);
 
