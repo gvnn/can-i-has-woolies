@@ -10,10 +10,8 @@ const printResult = (data: Timeslot[]): void => {
   data.forEach(slot => {
     const date = parseJSON(slot.Date);
     const pattern = "dd.MM.yyyy";
-    const output = format(date, pattern);
 
-    log(chalk.blue(output));
-    log(chalk.yellow(slot.ClosedText));
+    log(chalk.blue(format(date, pattern)));
 
     slot.Times.forEach(time => {
       log(
