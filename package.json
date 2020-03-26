@@ -6,6 +6,7 @@
   "license": "MIT",
   "devDependencies": {
     "@types/config": "^0.0.36",
+    "@types/figlet": "^1.2.0",
     "@types/node": "^12.12.31",
     "nodemon": "^2.0.2",
     "prettier": "^2.0.2",
@@ -27,6 +28,7 @@
     "chalk": "^3.0.0",
     "config": "^3.3.1",
     "date-fns": "^2.11.0",
+    "figlet": "^1.3.0",
     "gaxios": "^3.0.2"
   }
 }

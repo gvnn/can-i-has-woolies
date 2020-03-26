@@ -2,6 +2,7 @@ import { parseJSON, format } from "date-fns";
 import chalk from "chalk";
 import http from "./http";
 import config from "config";
+import { displayTitle } from "./silly";
 
 const log = console.log;
 
@@ -39,6 +40,7 @@ const printResult = (data: Timeslot[]) => {
 };
 
 const main = async () => {
+  await displayTitle();
   const res = await http.request<Timeslot[]>({
     url: config.get("api.timeslots"),
     params: {
