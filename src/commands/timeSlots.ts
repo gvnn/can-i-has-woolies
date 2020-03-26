@@ -6,20 +6,49 @@ import config from "config";
 import http from "../utils/http";
 import { GaxiosResponse } from "gaxios";
 
-const printResult = (data: Timeslot[]): void => {
-  data.forEach(slot => {
-    const date = parseJSON(slot.Date);
-    const pattern = "dd.MM.yyyy";
+const pattern = "PPPP";
 
-    log(chalk.blue(format(date, pattern)));
-
-    slot.Times.forEach(time => {
-      log(
-        time.TimeWindow,
-        chalk[time.Available ? "green" : "green"](time.TimeSlotStatus)
-      );
-    });
+const printFullList = (slot: Timeslot): void => {
+  const date = parseJSON(slot.Date);
+  log(chalk.bold(format(date, pattern)), "\n");
+  slot.Times.forEach(time => {
+    if (time.Available) {
+      log(time.TimeWindow, "\t", chalk.green(time.TimeSlotStatus));
+    } else {
+      log(time.TimeWindow, "\t", chalk.red(time.TimeSlotStatus));
+    }
   });
+
+  log("");
+};
+
+const printAvailable = (data: Timeslot[]): void => {
+  const available = data.reduce((accum, current) => {
+    const avTimes = current.Times.filter(t => t.Available);
+    if (avTimes.length > 0) {
+      accum.push({ Date: current.Date, Times: avTimes });
+    }
+    return accum;
+  }, [] as Timeslot[]);
+
+  if (available.length === 0) {
+    log(chalk.red("No available times for now, check later!"));
+    return;
+  }
+
+  log(chalk.green.bold("YAY! Slots are open!", "\n"));
+  available.forEach(printFullList);
+
+  log("");
+};
+
+const printResult = (data: Timeslot[], output: "list" | "check"): void => {
+  if (output === "list") {
+    data.forEach(printFullList);
+    return;
+  }
+
+  printAvailable(data);
 };
 
 const loadTimeSlot = async (
@@ -36,7 +65,9 @@ const loadTimeSlot = async (
     }
   });
 
-export const checkTimeSlots = async (): Promise<void> => {
+export const checkTimeSlots = async (
+  output: "list" | "check"
+): Promise<void> => {
   let addressConfig: Address;
   try {
     addressConfig = config.get("address");
@@ -45,9 +76,9 @@ export const checkTimeSlots = async (): Promise<void> => {
     return;
   }
 
-  log("Searching for:", addressConfig.AddressText);
+  log("Searching for:", addressConfig.AddressText, "\n");
 
   const slots = await loadTimeSlot(addressConfig);
 
-  printResult(slots.data);
+  printResult(slots.data, output);
 };

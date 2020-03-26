@@ -4,12 +4,12 @@ export interface TimeslotTime {
   TimeWindow: string;
   Available: boolean;
   TimeSlotStatus: string;
+  StartDateTime: string;
 }
 
 export interface Timeslot {
   Times: TimeslotTime[];
   Date: string;
-  ClosedText: string;
 }
 
 export interface AddressSearch {
