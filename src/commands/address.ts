@@ -6,36 +6,46 @@ import http from "../utils/http";
 import inquirer from "inquirer";
 import fs from "fs";
 
-export const checkAddress = async (addr: string) => {
-  log("Searching for:", addr);
-  const res = await http.request<{ Response: AddressSearch[] }>({
+const findAddress = async (Search: string) =>
+  await http.request<{ Response: AddressSearch[] }>({
     url: config.get("api.address"),
     method: "POST",
     data: {
-      Search: addr,
-    },
+      Search
+    }
   });
-  const inq = await inquirer.prompt({
+
+const promptOptions = async (addresses: { Response: AddressSearch[] }) =>
+  inquirer.prompt({
     type: "list",
     name: "AddressId",
     message: "What is your address?",
-    choices: res.data.Response.map((addr) => ({
+    choices: addresses.Response.map(addr => ({
       name: addr.Text,
-      value: addr.Id,
-    })),
+      value: addr.Id
+    }))
   });
 
-  const auto = await http.request<{ Address: Address }>({
+const findAddressData = async (selectedOption: { AddressId: any }) =>
+  http.request<{ Address: Address }>({
     url: config.get("api.auto"),
     method: "POST",
     data: {
-      AddressId: inq.AddressId,
-    },
+      AddressId: selectedOption.AddressId
+    }
   });
+
+export const checkAddress = async (addr: string) => {
+  log("Searching for:", addr);
+  const addresses = await findAddress(addr);
+
+  const selectedOption = await promptOptions(addresses.data);
+
+  const selectedAddres = await findAddressData(selectedOption);
 
   fs.writeFileSync(
     "./config/local.json",
-    JSON.stringify({ address: auto.data.Address })
+    JSON.stringify({ address: selectedAddres.data.Address })
   );
 
   log(chalk.red("Now you can search. Run yarn start -c"));
