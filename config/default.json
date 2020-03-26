@@ -1,0 +1,6 @@
+{
+  "api": {
+    "baseURL": "https://www.woolworths.com.au",
+    "timeslots": "/apis/ui/Timeslots"
+  }
+}

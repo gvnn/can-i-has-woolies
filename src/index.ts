@@ -1,6 +1,7 @@
-import { request } from "gaxios";
 import { parseJSON, format } from "date-fns";
 import chalk from "chalk";
+import http from "./http";
+import config from "config";
 
 const log = console.log;
 
@@ -38,9 +39,15 @@ const printResult = (data: Timeslot[]) => {
 };
 
 const main = async () => {
-  const res = await request<Timeslot[]>({
-    url:
-      "https://www.woolworths.com.au/apis/ui/Timeslots?addressId=8167070&areaId=2046&fulfilmentMethod=Courier&getMergedResults=false&suburbId=3480"
+  const res = await http.request<Timeslot[]>({
+    url: config.get("api.timeslots"),
+    params: {
+      addressId: 8167070,
+      areaId: 2046,
+      fulfilmentMethod: "Courier",
+      getMergedResults: false,
+      suburbId: 3480
+    }
   });
 
   printResult(res.data);
