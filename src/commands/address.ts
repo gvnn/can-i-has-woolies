@@ -6,6 +6,7 @@ import http from "../utils/http";
 import inquirer from "inquirer";
 import fs from "fs";
 import { GaxiosResponse } from "gaxios";
+import path from "path";
 
 const findAddress = async (
   Search: string
@@ -61,7 +62,7 @@ export const checkAddress = async (addr: string): Promise<void> => {
   const selectedAddress = await findAddressData(selectedOption);
 
   fs.writeFileSync(
-    "./config/local.json",
+    path.join(__dirname, '../../config/local.json'),
     JSON.stringify({ address: selectedAddress.data.Address })
   );
 
