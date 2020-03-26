@@ -41,11 +41,11 @@ export const checkAddress = async (addr: string) => {
 
   const selectedOption = await promptOptions(addresses.data);
 
-  const selectedAddres = await findAddressData(selectedOption);
+  const selectedAddress = await findAddressData(selectedOption);
 
   fs.writeFileSync(
     "./config/local.json",
-    JSON.stringify({ address: selectedAddres.data.Address })
+    JSON.stringify({ address: selectedAddress.data.Address })
   );
 
   log(chalk.red("Now you can search. Run yarn start -c"));
