@@ -34,7 +34,7 @@ const checkTimeSlots = async () => {
   try {
     addressConfig = config.get("address");
   } catch (error) {
-    log(chalk.red('No addrress config. Run yarn start -a "your address"'));
+    log(chalk.red('No address config. Run yarn start -a "your address"'));
     return;
   }
 
