@@ -5,6 +5,7 @@ import { Address, timeSlots } from "../services/woolies";
 import chalk from "chalk";
 import { log } from "../utils/log";
 import { getAvailableTimeSlots } from "../utils/timeSlots";
+import { nonNegativeInteger } from "../utils/numbers";
 
 const linkAnswer = "Go Go Go!";
 
@@ -35,13 +36,23 @@ const checkAvailability = async (addressConfig: Address): Promise<boolean> => {
 
 const loop = (): boolean => true;
 
-export const logPolling = async (): Promise<void> => {
+export const logPolling = async (minutes: string): Promise<void> => {
   let addressConfig: Address;
   try {
     addressConfig = config.get("address");
   } catch (error) {
     log(chalk.red('No address config. Run yarn start -a "your address"'));
     return;
+  }
+
+  let interval = 0;
+  if (minutes) {
+    try {
+      interval = nonNegativeInteger(minutes);
+    } catch (error) {
+      log(chalk.red("Invalid interval value"));
+      return;
+    }
   }
 
   while (loop()) {
@@ -60,10 +71,12 @@ export const logPolling = async (): Promise<void> => {
       }
     } else {
       log(
-        chalk.red.bold("No available times for now. I'll check in 15 minutes."),
+        chalk.red.bold(
+          `No available times for now. I'll check in ${interval} minutes.`
+        ),
         "\n"
       );
     }
-    await new Promise((resolve) => setTimeout(resolve, 1000 * 60 * 15));
+    await new Promise((resolve) => setTimeout(resolve, 1000 * 60 * interval));
   }
 };

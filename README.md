@@ -16,10 +16,9 @@ yarn start [options]
 
 ```
 Options:
-  Options:
-  -c, --check        check time slots
-  -l, --list         full timeslots output
-  -p, --polling      long polling time slots
-  -a, --addr <type>  search your address
-  -h, --help         display help for command
+  -c, --check              check time slots
+  -l, --list               full timeslots output
+  -p, --polling <minutes>  long polling time slots
+  -a, --addr <type>        search your address
+  -h, --help               display help for command
 ```

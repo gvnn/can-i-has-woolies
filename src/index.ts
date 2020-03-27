@@ -11,9 +11,8 @@ const main = async (): Promise<void> => {
   program
     .option("-c, --check", "check time slots", () => checkTimeSlots("check"))
     .option("-l, --list", "full timeslots output", () => checkTimeSlots("list"))
-    .option("-p, --polling", "long polling time slots", logPolling)
+    .option("-p, --polling <minutes>", "long polling time slots", logPolling)
     .option("-a, --addr <type>", "search your address", checkAddress)
-    .allowUnknownOption(false)
     .parse(process.argv);
 };
 
