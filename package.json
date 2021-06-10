@@ -5,7 +5,7 @@
   "author": "Giovanni Ferron <gvnnrulez@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@types/config": "^0.0.36",
+    "@types/config": "^0.0.38",
     "@types/figlet": "^1.2.0",
     "@types/inquirer": "^6.5.0",
     "@types/node": "^12.12.31",
